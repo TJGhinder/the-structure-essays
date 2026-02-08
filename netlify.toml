@@ -1,0 +1,12 @@
+# Netlify configuration
+# Pretty URLs are handled by the directory/index.html structure.
+# Each post lives at /post-slug/index.html, which Netlify serves as /post-slug/
+
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
