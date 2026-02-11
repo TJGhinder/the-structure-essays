@@ -124,9 +124,19 @@ body::before {
   height: 1px;
   background: var(--accent);
   margin: 2.5rem auto;
-  margin-bottom: 0;
   animation: fadeUp 0.8s ease 0.3s both;
 }
+
+
+.divider-homepage {
+  width: 60px;
+  height: 1px;
+  background: var(--accent);
+  margin: 2.5rem auto;
+  margin-bottom: -0.5rem;
+  animation: fadeUp 0.8s ease 0.3s both;
+}
+
 
 /* ── Post list ── */
 .post-list {
