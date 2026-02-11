@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The First Lesson — The Structure</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container container--wide">
+      <a href="/" class="site-title">The Structure</a>
+      <span class="site-nav">Essays on Philosophy, Morality, & Governance</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <a href="/" class="back-link">All essays</a>
+
+      <header class="article-header">
+        <h1>The First Lesson</h1>
+        <p class="sub">If you only remember one thing, let it be this</p>
+        <p class="meta">January 2026 · 4 min read</p>
+      </header>
+
+      <div class="divider" style="margin-top:0;"></div>
+
+      <article class="article-body">
+        <p>The capital-T Truth is: There is no capital-T Truth.</p>
+
+        <p>This is the central, most important lesson. Be humble, for you are limited in what you can know. There is no capital-T Truth, because as a living, breathing, medium-sized 3-dimensional creature who thinks and moves at medium-speeds through time–you know nothing.</p>
+
+        <p>Your full experience of reality is just a small slice of everything out there. You see 0.2% of the colors which exist. You come in contact with 0.01% of the human stories which are shared online every day. If you are an avid reader, the most you can hope to read in your lifetime may be a book a day for 100 years–36,500 books. Out of the millions of pieces of literature humans have written.</p>
+
+        <p>You couldn't build a toaster, and certainly not a laptop. You couldn't construct the internet. The minds required to build these tools are the minds made of millions of minds, distributed across generations. Constrained to your tiny slice of spacetime, you know nothing.</p>
+
+        <p>To claim to be an arbiter of the secrets of the universe is, objectively, nonsense. There is not a single human alive who understands how the Universe works, or what it even is.</p>
+
+        <p>As I have written about previously–stories ultimately build everything, which has meaning to us. There is no single, unassailable story. There just isn't.</p>
+
+        <p>If you zoom into molecules and atoms far enough, you see that there is actually nothing there at all–only the possibilities that things might be in particular places, or have particular momentum.</p>
+
+        <p>General relativity shows us that different observers can move through time at different rates--what even <em>is</em> 100 years of time?</p>
+
+        <p>You want to claim Truth? On such flimsy fabric?</p>
+
+        <p>The Universe teaches us to be humble, because for all we can see, we only truly see that we see nothing. As the island of knowledge grows, the perimeter of ignorance grows even larger. The more we know, the more we know we do not know.</p>
+
+        <!-- Interactive: The Island of Knowledge -->
+        <figure class="knowledge-circle-figure">
+          <canvas id="knowledgeCanvas"></canvas>
+          <div class="knowledge-slider">
+            <input type="range" id="knowledgeRange" min="25" max="125" value="40">
+          </div>
+          <figcaption>Drag the slider. As the island of knowledge grows, the shoreline of the unknown grows faster.</figcaption>
+        </figure>
+
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">The Structure — Philosophy, Morality, & Governance</div>
+  </footer>
+
+  <style>
+    .knowledge-circle-figure {
+      margin: 2.5em 0 1.5em;
+    }
+
+    .knowledge-circle-figure canvas {
+      width: 100%;
+      height: 300px;
+      background: #08080c;
+      border-radius: 4px;
+      display: block;
+    }
+
+    .knowledge-slider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .knowledge-slider-label {
+      font-size: 0.8em;
+      opacity: 0.5;
+      min-width: 85px;
+    }
+
+    .knowledge-slider input[type="range"] {
+      flex: 1;
+      accent-color: #4a7aba;
+      height: 2px;
+    }
+
+    .knowledge-circle-figure figcaption {
+      font-size: 0.8em;
+      opacity: 0.45;
+      margin-top: 10px;
+      font-style: italic;
+    }
+  </style>
+
+  <script>
+    (function () {
+      const canvas = document.getElementById('knowledgeCanvas');
+      const slider = document.getElementById('knowledgeRange');
+      if (!canvas || !slider) return;
+
+      function draw(radius) {
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 2;
+        const w = canvas.offsetWidth;
+        const h = canvas.offsetHeight;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        ctx.scale(dpr, dpr);
+
+        const cx = w / 2, cy = h / 2;
+        ctx.clearRect(0, 0, w, h);
+
+        // Background dots — the vast unknown
+        ctx.fillStyle = 'rgba(255,255,255,0.025)';
+        for (let i = 0; i < 900; i++) {
+          const px = ((i * 7919 + 42) % 10007) / 10007 * w;
+          const py = ((i * 6271 + 42) % 10007) / 10007 * h;
+          ctx.beginPath();
+          ctx.arc(px, py, 0.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Knowledge area — the island
+        const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.28)');
+        gradient.addColorStop(0.6, 'rgba(59, 130, 246, 0.14)');
+        gradient.addColorStop(1, 'rgba(59, 130, 246, 0.03)');
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Perimeter — the shoreline of known unknowns
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.7)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Question marks along the perimeter
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.5)';
+        ctx.font = Math.max(8, radius * 0.11) + 'px Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const numQ = Math.floor(radius * 0.45);
+        for (let i = 0; i < numQ; i++) {
+          const angle = (i / numQ) * Math.PI * 2;
+          ctx.fillText('?', cx + Math.cos(angle) * (radius + 9), cy + Math.sin(angle) * (radius + 9));
+        }
+
+        // Labels
+        ctx.fillStyle = 'rgba(59, 130, 246, 0.7)';
+        ctx.font = Math.max(9, Math.min(11, radius * 0.13)) + 'px Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('what you know', cx, cy);
+
+        ctx.fillStyle = 'rgba(255,255,255,0.12)';
+        ctx.font = 'italic 9px Georgia, serif';
+        ctx.fillText("what you don't know you don't know", cx, 16);
+
+        // Stats
+        const area = Math.PI * radius * radius;
+        const perimeter = 2 * Math.PI * radius;
+        ctx.font = '10px Georgia, serif';
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText('knowledge (area): ' + area.toFixed(0), 12, h - 30);
+        ctx.fillStyle = '#d4975a';
+        ctx.fillText('known unknowns (perimeter): ' + perimeter.toFixed(0), 12, h - 16);
+      }
+
+      draw(40);
+      slider.addEventListener('input', function () {
+        draw(Number(this.value));
+      });
+      window.addEventListener('resize', function () {
+        draw(Number(slider.value));
+      });
+    })();
+  </script>
+
+  <script src="/backlinks.js"></script>
+</body>
+</html>
