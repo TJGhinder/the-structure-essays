@@ -453,6 +453,7 @@ a {
   color: var(--muted);
   text-decoration: none;
   transition: color 0.2s;
+  font-weight: bold;
 }
 
 
