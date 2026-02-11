@@ -449,6 +449,18 @@ body::before {
   letter-spacing: 0.05em;
 }
 
+a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+
+a:hover {
+  color: var(--accent);
+}
+
+
 /* ── Animations ── */
 @keyframes fadeUp {
   from {
