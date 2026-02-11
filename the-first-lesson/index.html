@@ -51,7 +51,7 @@
         <figure class="knowledge-circle-figure">
           <canvas id="knowledgeCanvas"></canvas>
           <div class="knowledge-slider">
-            <input type="range" id="knowledgeRange" min="25" max="125" value="40">
+            <input type="range" id="knowledgeRange" min="25" max="125" value="40" aria-label="Knowledge size">
           </div>
           <figcaption>Drag the slider. As the island of knowledge grows, the shoreline of the unknown grows faster.</figcaption>
         </figure>
@@ -69,12 +69,15 @@
       margin: 2.5em 0 1.5em;
     }
 
+    /* Theme-aligned canvas surface */
     .knowledge-circle-figure canvas {
       width: 100%;
       height: 300px;
-      background: #08080c;
-      border-radius: 4px;
       display: block;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--paper), var(--cream));
+      box-shadow: 0 10px 30px var(--shadow);
     }
 
     .knowledge-slider {
@@ -84,21 +87,16 @@
       margin-top: 12px;
     }
 
-    .knowledge-slider-label {
-      font-size: 0.8em;
-      opacity: 0.5;
-      min-width: 85px;
-    }
-
     .knowledge-slider input[type="range"] {
       flex: 1;
-      accent-color: #4a7aba;
       height: 2px;
+      accent-color: var(--accent);
     }
 
     .knowledge-circle-figure figcaption {
-      font-size: 0.8em;
-      opacity: 0.45;
+      font-size: 0.85em;
+      color: var(--muted);
+      opacity: 0.9;
       margin-top: 10px;
       font-style: italic;
     }
@@ -110,83 +108,122 @@
       const slider = document.getElementById('knowledgeRange');
       if (!canvas || !slider) return;
 
+      function cssVar(name, fallback) {
+        const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return v || fallback;
+      }
+
+      function hexToRgb(hex) {
+        // Supports #rgb and #rrggbb
+        let h = (hex || '').trim();
+        if (!h.startsWith('#')) return null;
+        h = h.slice(1);
+        if (h.length === 3) h = h.split('').map(ch => ch + ch).join('');
+        if (h.length !== 6) return null;
+        const n = parseInt(h, 16);
+        return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+      }
+
+      function rgbaFromVar(varName, alpha, fallbackHex) {
+        const hex = cssVar(varName, fallbackHex);
+        const rgb = hexToRgb(hex) || hexToRgb(fallbackHex);
+        if (!rgb) return `rgba(0,0,0,${alpha})`;
+        return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+      }
+
+      const theme = {
+        ink: cssVar('--ink', '#1a1a1a'),
+        muted: cssVar('--muted', '#6b6560'),
+        paper: cssVar('--paper', '#f6f3ee'),
+        cream: cssVar('--cream', '#eae5db'),
+        accent: cssVar('--accent', '#8b4513'),
+        accentLight: cssVar('--accent-light', '#a0522d'),
+        border: cssVar('--border', '#d4cfc7'),
+        fontDisplay: cssVar('--font-display', 'Cormorant Garamond, Georgia, serif'),
+        fontBody: cssVar('--font-body', 'DM Sans, system-ui, sans-serif'),
+      };
+
       function draw(radius) {
         const ctx = canvas.getContext('2d');
-        const dpr = window.devicePixelRatio || 2;
+
+        // Handle DPR + resizing cleanly (avoid cumulative scaling)
+        const dpr = window.devicePixelRatio || 1;
         const w = canvas.offsetWidth;
         const h = canvas.offsetHeight;
-        canvas.width = w * dpr;
-        canvas.height = h * dpr;
-        ctx.scale(dpr, dpr);
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         const cx = w / 2, cy = h / 2;
         ctx.clearRect(0, 0, w, h);
 
-        // Background dots — the vast unknown
-        ctx.fillStyle = 'rgba(255,255,255,0.025)';
+        // Subtle "unknown" texture: tiny ink dots
+        ctx.fillStyle = rgbaFromVar('--ink', 0.045, '#1a1a1a');
         for (let i = 0; i < 900; i++) {
           const px = ((i * 7919 + 42) % 10007) / 10007 * w;
           const py = ((i * 6271 + 42) % 10007) / 10007 * h;
           ctx.beginPath();
-          ctx.arc(px, py, 0.8, 0, Math.PI * 2);
+          ctx.arc(px, py, 0.75, 0, Math.PI * 2);
           ctx.fill();
         }
 
-        // Knowledge area — the island
+        // Knowledge area — warm accent island
         const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.28)');
-        gradient.addColorStop(0.6, 'rgba(59, 130, 246, 0.14)');
-        gradient.addColorStop(1, 'rgba(59, 130, 246, 0.03)');
+        gradient.addColorStop(0, rgbaFromVar('--accent', 0.22, '#8b4513'));
+        gradient.addColorStop(0.65, rgbaFromVar('--accent', 0.11, '#8b4513'));
+        gradient.addColorStop(1, rgbaFromVar('--accent', 0.03, '#8b4513'));
         ctx.beginPath();
         ctx.arc(cx, cy, radius, 0, Math.PI * 2);
         ctx.fillStyle = gradient;
         ctx.fill();
 
-        // Perimeter — the shoreline of known unknowns
+        // Shoreline — accent-light dashed perimeter
         ctx.beginPath();
         ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(245, 158, 11, 0.7)';
+        ctx.strokeStyle = rgbaFromVar('--accent-light', 0.7, '#a0522d');
         ctx.lineWidth = 2;
         ctx.setLineDash([4, 4]);
         ctx.stroke();
         ctx.setLineDash([]);
 
         // Question marks along the perimeter
-        ctx.fillStyle = 'rgba(245, 158, 11, 0.5)';
-        ctx.font = Math.max(8, radius * 0.11) + 'px Georgia, serif';
+        ctx.fillStyle = rgbaFromVar('--accent-light', 0.55, '#a0522d');
+        ctx.font = `${Math.max(9, radius * 0.11)}px ${theme.fontDisplay}`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        const numQ = Math.floor(radius * 0.45);
+        const numQ = Math.max(10, Math.floor(radius * 0.45));
         for (let i = 0; i < numQ; i++) {
           const angle = (i / numQ) * Math.PI * 2;
           ctx.fillText('?', cx + Math.cos(angle) * (radius + 9), cy + Math.sin(angle) * (radius + 9));
         }
 
         // Labels
-        ctx.fillStyle = 'rgba(59, 130, 246, 0.7)';
-        ctx.font = Math.max(9, Math.min(11, radius * 0.13)) + 'px Georgia, serif';
+        ctx.fillStyle = rgbaFromVar('--ink', 0.78, '#1a1a1a');
+        ctx.font = `${Math.max(11, Math.min(15, radius * 0.14))}px ${theme.fontDisplay}`;
         ctx.textAlign = 'center';
         ctx.fillText('what you know', cx, cy);
 
-        ctx.fillStyle = 'rgba(255,255,255,0.12)';
-        ctx.font = 'italic 9px Georgia, serif';
-        ctx.fillText("what you don't know you don't know", cx, 16);
+        ctx.fillStyle = rgbaFromVar('--muted', 0.45, '#6b6560');
+        ctx.font = `italic 10px ${theme.fontDisplay}`;
+        ctx.fillText("what you don't know you don't know", cx, 18);
 
-        // Stats
+        // Stats (bottom-left)
         const area = Math.PI * radius * radius;
         const perimeter = 2 * Math.PI * radius;
-        ctx.font = '10px Georgia, serif';
         ctx.textAlign = 'left';
-        ctx.fillStyle = '#94a3b8';
+        ctx.font = `11px ${theme.fontBody}`;
+        ctx.fillStyle = rgbaFromVar('--muted', 0.85, '#6b6560');
         ctx.fillText('knowledge (area): ' + area.toFixed(0), 12, h - 30);
-        ctx.fillStyle = '#d4975a';
-        ctx.fillText('known unknowns (perimeter): ' + perimeter.toFixed(0), 12, h - 16);
+        ctx.fillStyle = rgbaFromVar('--accent-light', 0.85, '#a0522d');
+        ctx.fillText('known unknowns (perimeter): ' + perimeter.toFixed(0), 12, h - 14);
       }
 
-      draw(40);
+      draw(Number(slider.value));
+
       slider.addEventListener('input', function () {
         draw(Number(this.value));
       });
+
       window.addEventListener('resize', function () {
         draw(Number(slider.value));
       });
