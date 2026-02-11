@@ -1,6 +1,19 @@
 // backlinks.js
 /* ── Blog post registry for backlink previews ── */
 export const POSTS = {
+  '/the-structure-origins/': {
+  title: 'The Structure Origins',
+  sub: 'From possibility to reality, from collapse to creation',
+  excerpt: 'Anything could be. Anything at all. Mind can construct anything—but the real question is: can those constructions cool down into reality? Three major lines of inquiry converge on a shared philosophical truth: Possibility is the fundamental unit of existence. What we consider "real" is simply the subset of possibilities that have stabilized enough for us to perceive them.',
+  datePublished: '2025-08-27',
+},
+  '/the-power-of-stories/': {
+    title: 'The Power of Stories',
+    sub: 'Why the narratives that bind us matter more than their truth',
+    excerpt:
+      'The mathematics of evolution reveal an uncomfortable truth: species survive not by perceiving reality as it is, but by perceiving it in whatever way maximizes their reproductive fitness. We are not truth-seeking machines. We are survival machines that use whatever stories work. By the laws of evolution, the oldest stories that remain with us endure not because they are true, but because they are useful.',
+    datePublished: '2025-10-08',
+  },
   '/the-first-lesson/': {
     title: 'The First Lesson',
     sub: 'If you only remember one thing, let it be this',
