@@ -1,29 +1,47 @@
+// backlinks.js
 /* ── Blog post registry for backlink previews ── */
-const POSTS = {
+export const POSTS = {
+  '/the-first-lesson/': {
+    title: 'The First Lesson',
+    sub: 'If you only remember one thing, let it be this',
+    excerpt:
+      'The capital-T Truth is: There is no capital-T Truth. This is the central, most important lesson. Be humble, for you are limited in what you can know. There is no capital-T Truth, because as a living, breathing, medium-sized 3-dimensional creature who thinks and moves at medium-speeds through time–you know nothing.',
+    datePublished: '2026-02-01', // <-- add dates so index can sort + render
+  },
   '/the-examined-life/': {
     title: 'The Examined Life',
     sub: 'Why Socrates was right — and why we keep forgetting',
-    excerpt: 'Self-reflection is not a luxury of the leisured class. It is the minimum requirement for moral agency. Without it, we act on inherited impulse and call it conviction.',
+    excerpt:
+      'Self-reflection is not a luxury of the leisured class. It is the minimum requirement for moral agency. Without it, we act on inherited impulse and call it conviction.',
+    datePublished: '2026-01-15',
   },
   '/social-contract-reimagined/': {
     title: 'The Social Contract, Reimagined',
     sub: 'Consent, coercion, and the state we never chose',
-    excerpt: 'Rousseau asked us to imagine a contract none of us signed. Perhaps the more honest question is: what obligations survive the absence of consent?',
+    excerpt:
+      'Rousseau asked us to imagine a contract none of us signed. Perhaps the more honest question is: what obligations survive the absence of consent?',
+    datePublished: '2025-12-10',
   },
   '/on-moral-luck/': {
     title: 'On Moral Luck',
     sub: 'The uncomfortable truth about praise and blame',
-    excerpt: 'We praise the surgeon whose hand was steady and blame the one whose hand trembled — yet neither chose their nerves. Moral luck haunts every judgment we make.',
+    excerpt:
+      'We praise the surgeon whose hand was steady and blame the one whose hand trembled — yet neither chose their nerves. Moral luck haunts every judgment we make.',
+    datePublished: '2025-11-18',
   },
   '/virtue-in-the-digital-age/': {
     title: 'Virtue in the Digital Age',
     sub: 'Aristotle never had a Twitter account',
-    excerpt: 'The virtues were forged for the agora, not the algorithm. Can courage, temperance, and justice survive a world optimized for engagement?',
+    excerpt:
+      'The virtues were forged for the agora, not the algorithm. Can courage, temperance, and justice survive a world optimized for engagement?',
+    datePublished: '2025-10-22',
   },
   '/the-obligation-to-dissent/': {
     title: 'The Obligation to Dissent',
     sub: 'When silence becomes complicity',
-    excerpt: 'There are moments when obedience is the greater sin. The history of moral progress is, in large part, a history of principled refusal.',
+    excerpt:
+      'There are moments when obedience is the greater sin. The history of moral progress is, in large part, a history of principled refusal.',
+    datePublished: '2025-09-05',
   },
 };
 
@@ -47,7 +65,6 @@ function showTooltip(link) {
   clearTimeout(hideTimeout);
 
   const href = link.getAttribute('href');
-  // Normalize href to match registry keys
   const path = href.endsWith('/') ? href : href + '/';
   const post = POSTS[path];
   if (!post) return;
@@ -59,18 +76,15 @@ function showTooltip(link) {
     <a class="preview-cta" href="${href}" target="_blank" rel="noopener">Read essay →</a>
   `;
 
-  // Position
   const rect = link.getBoundingClientRect();
   const scrollY = window.scrollY;
   const scrollX = window.scrollX;
 
   let top = rect.bottom + scrollY + 10;
-  let left = rect.left + scrollX + (rect.width / 2) - 160;
+  let left = rect.left + scrollX + rect.width / 2 - 160;
 
-  // Keep within viewport
   left = Math.max(12, Math.min(left, window.innerWidth - 332));
 
-  // If tooltip would go below viewport, show above
   if (rect.bottom + 220 > window.innerHeight) {
     top = rect.top + scrollY - 10;
     tooltip.style.transform = 'translateY(-100%)';
@@ -137,14 +151,12 @@ function closeMobilePreview() {
   document.body.style.overflow = '';
 }
 
-/* ── Bind events ── */
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.backlink').forEach(link => {
-    // Desktop hover
+/* ── Exported initializer ── */
+export function initBacklinks() {
+  document.querySelectorAll('.backlink').forEach((link) => {
     link.addEventListener('mouseenter', () => showTooltip(link));
     link.addEventListener('mouseleave', hideTooltip);
 
-    // Mobile tap
     link.addEventListener('click', (e) => {
       if (isTouchDevice()) {
         e.preventDefault();
@@ -153,15 +165,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Keep tooltip alive when hovering tooltip itself
-  document.addEventListener('mouseenter', (e) => {
-    if (e.target.closest && e.target.closest('.preview-tooltip')) {
-      clearTimeout(hideTimeout);
-    }
-  }, true);
-  document.addEventListener('mouseleave', (e) => {
-    if (e.target.closest && e.target.closest('.preview-tooltip')) {
-      hideTooltip();
-    }
-  }, true);
-});
+  document.addEventListener(
+    'mouseenter',
+    (e) => {
+      if (e.target.closest && e.target.closest('.preview-tooltip')) {
+        clearTimeout(hideTimeout);
+      }
+    },
+    true
+  );
+  document.addEventListener(
+    'mouseleave',
+    (e) => {
+      if (e.target.closest && e.target.closest('.preview-tooltip')) {
+        hideTooltip();
+      }
+    },
+    true
+  );
+}
